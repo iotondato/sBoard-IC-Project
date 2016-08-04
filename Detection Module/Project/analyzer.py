@@ -2,11 +2,12 @@
 
 """ Brenno T. De Faria """
 """ Projeto de IC """
-""" Modulo De Detecao Imagem.0 """
+""" Modulo De Detecao Imagem.1 """
 
 import numpy as np
 import cv2
-# from matplotlib import pyplot as plt
+import math
+from matplotlib import pyplot as plt
 
 
 # funcao para subitrair o fundo
@@ -20,12 +21,23 @@ def backgroundSubstraction(back, frame):
 
 # funcao para gerar um histograma da imagem
 def histogram(diff_frame):
-    # print plt.hist(diff_frame.ravel(), 256, [0, 256])
+    # plt.hist(diff_frame.ravel(), 256, [0, 256])
+    hist = cv2.calcHist(diff_frame, [0], None, [256], [0, 256])
+    # hist, bins = np.histogram(diff_frame.ravel(), 256, [0, 256])
+    # plt.imshow(hist, interpolation='nearest')
     # plt.show()
-    # plt.savefig('images/histogram.png')
-    hist = cv2.calcHist([diff_frame], [0], None, [256], [0, 256])
-    return hist
+    print hist
 
 
+"""
 def shannonEntropy(Img_histogram):
-    return
+    SE = 0
+
+    for i in Img_histogram:
+        prob = Img_histogram[i] / Img_size
+        SE = prob *  math.log(prob, 2)
+        SE = -SE
+    print prob
+        print
+    # print SE
+"""
