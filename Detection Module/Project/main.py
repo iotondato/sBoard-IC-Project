@@ -47,7 +47,8 @@ if __name__ == '__main__':
         # ========================================================================
 
         # ============================= Entropia =================================
-        cv2.imwrite('image/histogram.png', analyzer.histogram(diff_frame))
+        
+        #cv2.imwrite('image/histogram.png', analyzer.histogram(diff_frame)
         # --> entropia de shanon
         # ========================================================================
 
@@ -74,5 +75,5 @@ if __name__ == '__main__':
             back = cv2.cvtColor(back, cv2.COLOR_BGR2GRAY)
             cv2.imwrite('images/backGray.jpg', back)
     # img.release()
-    cv2.destroyAllWindows()
+    #cv2.destroyAllWindows()
 
