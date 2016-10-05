@@ -43,12 +43,12 @@ if __name__ == '__main__':
         # ============= Subtracao De Fundo Para As imagens da lista ==============
         diff_frame  = analyzer.backgroundSubstraction(back, frame)
         cv2.imwrite('images/diffFrame.jpg', diff_frame)
-        # print diff_frame
+        print diff_frame
         i += 1
         # ========================================================================
 
         # ============================= Entropia =================================
-        print analyzer.histogram(diff_frame)
+        analyzer.histogram(diff_frame)
 
         # ========================================================================
 
