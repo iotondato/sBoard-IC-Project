@@ -26,5 +26,6 @@ def histogram(diff_frame):
     hist = cv2.calcHist([diff_frame], [0], None, [256], [0, 256])
     return hist
 
+
 def shannonEntropy(Img_histogram):
     return

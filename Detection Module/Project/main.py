@@ -47,7 +47,7 @@ if __name__ == '__main__':
         # ========================================================================
 
         # ============================= Entropia =================================
-        analyzer.histogram(diff_frame)
+        cv2.imwrite('image/histogram.png', analyzer.histogram(diff_frame))
         # --> entropia de shanon
         # ========================================================================
 
