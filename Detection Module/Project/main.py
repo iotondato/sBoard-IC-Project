@@ -15,12 +15,11 @@ import analyzer
 if __name__ == '__main__':
     board_list = []
     i = 0
-
     # ==========  REFERENCIA PARA A CAMERA DO RASP E METODOS DE CAPTURA ==========
     camera  = PiCamera()
     camera.resolution = (720, 480)
     camera.framerate = 15
-    rawCapture = PiRGBArray(camera)
+    # rawCapture = PiRGBArray(camera)
     time.sleep(0.1)
     # ============================================================================
 
@@ -49,7 +48,13 @@ if __name__ == '__main__':
 
         # ============================= Entropia =================================
         analyzer.histogram(diff_frame)
+        # --> entropia de shanon
+        # ========================================================================
 
+        # ============================ Envio de Imagem ===========================
+        # --> busca da imagen selecionanda
+        # --> envio da lousa selecionanda
+        # --> limpa imagens anteriores 
         # ========================================================================
 
         # ========================== Show Images =================================
@@ -62,10 +67,12 @@ if __name__ == '__main__':
         k = cv2.waitKey(30) & 0xff
         if k == 27:
             break
+
         if k == 122:
             camera.capture('back.png')
             back = cv2.imread('back.png')
             back = cv2.cvtColor(back, cv2.COLOR_BGR2GRAY)
+            cv2.imwrite('images/backGray.jpg', back)
     # img.release()
     cv2.destroyAllWindows()
 
