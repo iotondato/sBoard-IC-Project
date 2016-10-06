@@ -20,7 +20,7 @@ def backgroundSubstraction(back, frame):
 
 # funcao para gerar um histograma da imagem
 def histogram(diff_frame):
-    print plt.hist(diff_frame.ravel(), 256, [0, 256])
+    # print plt.hist(diff_frame.ravel(), 256, [0, 256])
     # plt.show()
     # plt.savefig('images/histogram.png')
     hist = cv2.calcHist([diff_frame], [0], None, [256], [0, 256])
