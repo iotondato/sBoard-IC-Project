@@ -54,7 +54,7 @@ if __name__ == '__main__':
         # ============================ Envio de Imagem ===========================
         # --> busca da imagen selecionanda
         # --> envio da lousa selecionanda
-        # --> limpa imagens anteriores 
+        # --> limpa imagens anteriores
         # ========================================================================
 
         # ========================== Show Images =================================

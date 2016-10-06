@@ -6,7 +6,7 @@
 
 import numpy as np
 import cv2
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
 
 
 # funcao para subitrair o fundo
@@ -23,8 +23,8 @@ def histogram(diff_frame):
     print plt.hist(diff_frame.ravel(), 256, [0, 256])
     # plt.show()
     # plt.savefig('images/histogram.png')
-    # hist = cv2.calcHist([diff_frame], [0], None, [256], [0, 256])
-    # return hist
+    hist = cv2.calcHist([diff_frame], [0], None, [256], [0, 256])
+    return hist
 
 def shannonEntropy(Img_histogram):
     return
