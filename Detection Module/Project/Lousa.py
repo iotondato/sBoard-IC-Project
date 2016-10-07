@@ -8,20 +8,11 @@ class lousa:
     def __init__(self, imgRGB):
         self._img_RGB = imgRGB
 
-
     def setImgRGB(self, imgRGB):
         self._img_RGB = imgRGB
 
     def getImgRGB(self):
         return self._img_RGB
-
-    """
-    def setImgGRY(self, imgGRY):
-        self._img_GRY = imgGRY
-
-    def getImgGRY(self):
-        return self._img_GRY
-    """
 
     def setImgTXT(self, imgTXT):
         self._img_TXT = imgTXT
