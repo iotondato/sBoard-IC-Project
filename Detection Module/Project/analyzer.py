@@ -6,6 +6,7 @@
 
 import numpy as np
 import cv2
+import math
 from matplotlib import pyplot as plt
 
 
@@ -20,12 +21,19 @@ def backgroundSubstraction(back, frame):
 
 # funcao para gerar um histograma da imagem
 def histogram(diff_frame):
-    plt.hist(diff_frame.ravel(), 256, [0, 256])
-    # plt.show()
-    # plt.savefig('images/histogram.png')
-    #hist = cv2.calcHist([diff_frame], [0], None, [256], [0, 256])
-    #return hist
+    #plt.hist(diff_frame.ravel(), 256, [0, 256])
+    #plt.show()
+    # hist = cv2.calcHist([diff_frame], [0], None, [256], [0, 256])
+    hist, bins = np.histogram(diff_frame.ravel(), 256, [0, 256])
+    shannonEntropy(hist, 720 * 480)
 
 
-def shannonEntropy(Img_histogram):
-    return
+def shannonEntropy(Img_histogram, Img_size):
+    SE = 0
+    for i in range(0, 256):
+        prob = Img_histogram[i] / Img_size
+        # SE = prob *  math.log(prob, 2)
+        # SE = SE * (-1)
+        print prob
+        print
+    # print SE
