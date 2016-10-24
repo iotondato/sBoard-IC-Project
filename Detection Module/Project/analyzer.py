@@ -21,19 +21,23 @@ def backgroundSubstraction(back, frame):
 
 # funcao para gerar um histograma da imagem
 def histogram(diff_frame):
-    #plt.hist(diff_frame.ravel(), 256, [0, 256])
-    #plt.show()
-    # hist = cv2.calcHist([diff_frame], [0], None, [256], [0, 256])
-    hist, bins = np.histogram(diff_frame.ravel(), 256, [0, 256])
-    shannonEntropy(hist, 720 * 480)
+    # plt.hist(diff_frame.ravel(), 256, [0, 256])
+    hist = cv2.calcHist(diff_frame, [0], None, [256], [0, 256])
+    # hist, bins = np.histogram(diff_frame.ravel(), 256, [0, 256])
+    # plt.imshow(hist, interpolation='nearest')
+    # plt.show()
+    print hist
 
 
-def shannonEntropy(Img_histogram, Img_size):
+"""
+def shannonEntropy(Img_histogram):
     SE = 0
-    for i in range(0, 256):
+
+    for i in Img_histogram:
         prob = Img_histogram[i] / Img_size
-        # SE = prob *  math.log(prob, 2)
-        # SE = SE * (-1)
-        print prob
+        SE = prob *  math.log(prob, 2)
+        SE = -SE
+    print prob
         print
     # print SE
+"""
