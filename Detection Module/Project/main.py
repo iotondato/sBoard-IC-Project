@@ -13,7 +13,7 @@ import Lousa as brd
 import analyzer
 
 
-def backCamCapture(img, camera):
+def backCamCapture(camera):
     camera.capture('images/back.jpg')
     back = cv2.imread('images/back.jpg')
     back = cv2.cvtColor(back, cv2.COLOR_BGR2GRAY)
@@ -25,7 +25,7 @@ def backCamCapture(img, camera):
     return frame
     """
 
-def frameCamCapture(img, camera):
+def frameCamCapture(camera):
 
     camera.capture('images/frame.jpg')
     frame = cv2.imread('images/frame.jpg')
