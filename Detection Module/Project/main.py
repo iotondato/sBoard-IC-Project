@@ -13,12 +13,6 @@ import Lousa as brd
 import analyzer
 
 
-def init ():
-
-    # rawCapture = PiRGBArray(camera)
-    return camera
-
-
 def backCamCapture(img, camera):
     camera.capture('images/back.jpg')
     back = cv2.imread('images/back.jpg')
@@ -98,6 +92,6 @@ if __name__ == '__main__':
         if k == 122:
             backCamCapture(camera)
 
-    img.release()
-    cv2.destroyAllWindows()
+    # img.release()
+    # cv2.destroyAllWindows()
 
