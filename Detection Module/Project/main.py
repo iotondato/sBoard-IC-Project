@@ -6,59 +6,57 @@
 
 import numpy as np
 import cv2
-# from picamera.array import PiRGBArray
-# from picamera import PiCamera
+from picamera.array import PiRGBArray
+from picamera import PiCamera
 import time
 import Lousa as brd
 import analyzer
 
 
 def init ():
-    """
-    camera = PiCamera()
-    camera.resolution = (720, 480)
-    camera.framerate = 15
+
     # rawCapture = PiRGBArray(camera)
     return camera
-    """
 
 
-def backCamCapture(img):
-    """
+def backCamCapture(img, camera):
     camera.capture('images/back.jpg')
     back = cv2.imread('images/back.jpg')
     back = cv2.cvtColor(back, cv2.COLOR_BGR2GRAY)
-    """
 
+    """
     # DESKTOP VERSION
     ret, fgbg = img.read()
     frame = cv2.cvtColor(fgbg, cv2.COLOR_BGR2GRAY)
     return frame
-
-
-def frameCamCapture(img):
     """
+
+def frameCamCapture(img, camera):
+
     camera.capture('images/frame.jpg')
     frame = cv2.imread('images/frame.jpg')
     """
     ret, frame = img.read()
     return frame
-
+    """
 
 if __name__ == '__main__':
     board_list = []
     i = 0
 
+    camera = PiCamera()
+    camera.resolution = (720, 480)
+    camera.framerate = 15
+
+    """
     img = cv2.VideoCapture(0)
     time.sleep(0.1)
-
-    init()
-
-    back = backCamCapture(img)
+    """
+    back = backCamCapture(camera)
 
     while True:
         # ====================== Captura Do Frame da Lousa =======================
-        frame = frameCamCapture(img)
+        frame = frameCamCapture(camera)
         board = brd.lousa(frame)
         board_list.append(board)
         print board_list
@@ -98,7 +96,7 @@ if __name__ == '__main__':
             break
 
         if k == 122:
-            backCamCapture()
+            backCamCapture(camera)
 
     img.release()
     cv2.destroyAllWindows()
