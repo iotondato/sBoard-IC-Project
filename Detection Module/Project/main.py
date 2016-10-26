@@ -14,10 +14,6 @@ import analyzer
 
 
 def backCamCapture(camera):
-    camera.capture('images/back.jpg')
-    back = cv2.imread('images/back.jpg')
-    back = cv2.cvtColor(back, cv2.COLOR_BGR2GRAY)
-
     """
     # DESKTOP VERSION
     ret, fgbg = img.read()
@@ -26,9 +22,6 @@ def backCamCapture(camera):
     """
 
 def frameCamCapture(camera):
-
-    camera.capture('images/frame.jpg')
-    frame = cv2.imread('images/frame.jpg')
     """
     ret, frame = img.read()
     return frame
@@ -46,11 +39,17 @@ if __name__ == '__main__':
     img = cv2.VideoCapture(0)
     time.sleep(0.1)
     """
-    back = backCamCapture(camera)
+    # back = backCamCapture(camera)
+
+    camera.capture('images/back.jpg')
+    back = cv2.imread('images/back.jpg')
+    back = cv2.cvtColor(back, cv2.COLOR_BGR2GRAY)
 
     while True:
         # ====================== Captura Do Frame da Lousa =======================
-        frame = frameCamCapture(camera)
+        camera.capture('images/frame.jpg')
+        frame = cv2.imread('images/frame.jpg')
+        # frame = frameCamCapture(camera)
         board = brd.lousa(frame)
         board_list.append(board)
         print board_list
@@ -90,7 +89,10 @@ if __name__ == '__main__':
             break
 
         if k == 122:
-            backCamCapture(camera)
+            # backCamCapture(camera)
+            camera.capture('images/back.jpg')
+            back = cv2.imread('images/back.jpg')
+            back = cv2.cvtColor(back, cv2.COLOR_BGR2GRAY)
 
     # img.release()
     # cv2.destroyAllWindows()
