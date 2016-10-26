@@ -15,7 +15,6 @@ def backgroundSubstraction(back, frame):
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     diff_frame = cv2.absdiff(back, frame)
     cv2.multiply(diff_frame, diff_frame, diff_frame, 2)
-
     return diff_frame
 
 
