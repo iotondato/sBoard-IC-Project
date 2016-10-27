@@ -7,6 +7,8 @@
 import numpy as np
 import cv2
 import math
+# import matplotlib.mlab as mlab
+# import matplotlib.pyplot as plt
 
 def backgroundSubstraction(back, frame):
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -17,22 +19,20 @@ def backgroundSubstraction(back, frame):
 
 # funcao para gerar um histograma da imagem
 def histogram(diff_frame):
-    # plt.hist(diff_frame.ravel(), 256, [0, 256])
-    hist = cv2.calcHist(diff_frame, [0], None, [256], [0, 256])
+    hist = cv2.calcHist(diff_frame, [1], None, [256], [0, 255])
     # hist, bins = np.histogram(diff_frame.ravel(), 256, [0, 256])
     # plt.imshow(hist, interpolation='nearest')
     # plt.show()
-    print hist
+    # print hist
+    return hist
 
-
-"""def shannonEntropy(Img_histogram):
+def shannonEntropy(Img_histogram, Img_size):
     SE = 0
-
-    for i in Img_histogram:
+    list = []
+    for i in range(0, len(Img_histogram)):
+        print Img_histogram[i]
         prob = Img_histogram[i] / Img_size
+        print prob
         SE = prob *  math.log(prob, 2)
-        SE = -SE
-    print prob
-        print
-    # print SE
-"""
+        SE += SE * (-1)
+    print SE

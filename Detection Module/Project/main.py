@@ -12,20 +12,18 @@ import time
 import Lousa as brd
 import analyzer
 
-
+"""
 def backCamCapture(camera):
-    """
     # DESKTOP VERSION
     ret, fgbg = img.read()
     frame = cv2.cvtColor(fgbg, cv2.COLOR_BGR2GRAY)
     return frame
-    """
-
+"""
+"""
 def frameCamCapture(camera):
-    """
     ret, frame = img.read()
     return frame
-    """
+"""
 
 if __name__ == '__main__':
     board_list = []
@@ -34,37 +32,34 @@ if __name__ == '__main__':
     camera = PiCamera()
     camera.resolution = (720, 480)
     camera.framerate = 15
-
     """
     img = cv2.VideoCapture(0)
     time.sleep(0.1)
     """
-    # back = backCamCapture(camera)
+
+    # back = backCamCapture(img)
 
     camera.capture('images/back.jpg')
     back = cv2.imread('images/back.jpg')
     back = cv2.cvtColor(back, cv2.COLOR_BGR2GRAY)
 
+
     while True:
         # ====================== Captura Do Frame da Lousa =======================
+
         camera.capture('images/frame.jpg')
         frame = cv2.imread('images/frame.jpg')
-        # frame = frameCamCapture(camera)
-        board = brd.lousa(frame)
-        board_list.append(board)
-        print board_list
-        # ========================================================================
 
-        # ============= Subtracao De Fundo Para As imagens da lista ==============
-        diff_frame  = analyzer.backgroundSubstraction(back, frame)
-        #analyzer.histogram(diff_frame)
-        # print diff_frame
+        # frame = frameCamCapture(img)
+        # board = brd.lousa(frame)
+        # board_list.append(board)
+        # print board_list
         # ========================================================================
 
         # ============================= Entropia =================================
-        #cv2.imwrite('image/histogram.png', analyzer.histogram(diff_frame)
-        # analyzer.histogram(diff_frame)
-        # --> entropia de shanon
+        diff_frame  = analyzer.backgroundSubstraction(back, frame)
+        hist = analyzer.histogram(diff_frame)
+        analyzer.shannonEntropy(hist,720*480 )
         # --> np.argmax() para saber qual o indice que comtem a imagem com
         # maior quantidade de infirmacao
         # ========================================================================
@@ -77,9 +72,9 @@ if __name__ == '__main__':
 
         # ========================== Show Images =================================
 
-        cv2.imshow('diff_frame', diff_frame)
-        cv2.imshow('back', back)
-        cv2.imshow('frame', frame)
+        # cv2.imshow('diff_frame', diff_frame)
+        # cv2.imshow('back', back)
+        # cv2.imshow('frame', frame)
         # ========================================================================
 
         i += 1
@@ -89,7 +84,8 @@ if __name__ == '__main__':
             break
 
         if k == 122:
-            # backCamCapture(camera)
+            # backCamCapture(img)
+
             camera.capture('images/back.jpg')
             back = cv2.imread('images/back.jpg')
             back = cv2.cvtColor(back, cv2.COLOR_BGR2GRAY)
