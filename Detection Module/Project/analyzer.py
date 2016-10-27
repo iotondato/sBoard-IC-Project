@@ -30,8 +30,9 @@ def shannonEntropy(Img_histogram, Img_size):
     SE = 0
     list = []
     for i in range(0, len(Img_histogram)):
-        print Img_histogram[i]
-        prob = Img_histogram[i] / Img_size
+        # print Img_histogram[i]
+
+        prob = int(Img_histogram[i]) / Img_size
         print prob
         SE = prob[0] *  math.log(prob[0], 2)
         SE += SE * (-1)
