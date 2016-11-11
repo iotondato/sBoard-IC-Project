@@ -1,13 +1,12 @@
 
 Installing Lemon Library for C++
---------------------------------
+================================
 
-MAC OS
-======
-
-
-LINUX
-=====
+macOs & Linux
+-------------
+1 - Download the lemon lib from source on :
+    - https://lemon.cs.elte.hu/trac/lemon/wiki/Downloads
 
 
-font: https://lemon.cs.elte.hu/trac/lemon/wiki/InstallLinux
+
+font[1]: https://lemon.cs.elte.hu/trac/lemon/wiki/InstallLinux
