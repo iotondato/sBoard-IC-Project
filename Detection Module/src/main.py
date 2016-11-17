@@ -33,8 +33,6 @@ if __name__ == '__main__':
     img = cv2.VideoCapture(0)
     time.sleep(0.1)
 
-    # back = cv2.imread('images/fundo.jpg')
-    # back = cv2.cvtColor(back, cv2.COLOR_BGR2GRAY)
     back = cmra.backCamCapture(img)
 
     # ================ RASP CAM ==================
@@ -56,7 +54,7 @@ if __name__ == '__main__':
         """
         # ============================================
 
-        # frame = cmra.frameCamCapture(img)
+        frame = cmra.frameCamCapture(img)
 
         # board = brd.lousa(frame)
         # board_list.append(frame)
@@ -66,17 +64,17 @@ if __name__ == '__main__':
         # ========================================================================
 
         # ============================= Entropia =================================
-        # diff_frame  = cmra.backgroundSubstraction(back, frame )
+        diff_frame  = cmra.backgroundSubstraction(back, frame )
         # diff_frame = cv2.imread('images/big_black.jpg')
-        # probs_list = cmra.probArray(cmra.histogram(diff_frame), cmra.imageSize(diff_frame))
+        probs_list = cmra.probArray(cmra.histogram(diff_frame), cmra.imageSize(diff_frame))
 
-        # shannon_list.append(cmra.shannonEntropy(probs_list))
-        # print "Lista de Entropias"
-        # print shannon_list
-        # print
-        # print "Index: "
-        # print np.argmax(shannon_list)
-        # print
+        shannon_list.append(cmra.shannonEntropy(probs_list))
+        print "Lista de Entropias"
+        print shannon_list
+        print
+        print "Index: "
+        print np.argmax(shannon_list)
+        print
         # --> np.argmax() para saber qual o indice que comtem a imagem com
         # maior quantidade de infirmacao
         # ========================================================================

@@ -7,36 +7,33 @@
 import numpy as np
 import cv2
 import math
-import matplotlib.mlab as mlab
-import matplotlib.pyplot as plt
-import os, PIL
-from PIL import Image
+# import matplotlib.mlab as mlab
+# import matplotlib.pyplot as plt
+# import os, PIL
+# from PIL import Image
 
 def backCamCapture(camera):
     # DESKTOP VERSION
     back_list = []
-    # back_frame = cv2.imread('images/frame0.bmp')
     px = 0
-    # height, width = 0
 
-    for i in range(0, 30):
+    for i in range(1, 4):
         ret, back = camera.read()
         frame = cv2.cvtColor(back, cv2.COLOR_BGR2GRAY)
         height, width = frame.shape[:2]
-        #cv2.imwrite('images/frame' + str(i) + '.bmp', frame)
+        cv2.imwrite('images/frame' + str(i) + '.bmp', frame)
         back_list.append(frame)
 
     print back_list
     print
     print len(back_list)
-    print len(back_list[0])
 
     back_frame = np.zeros(shape=(height, width))
-
 
     # print back_list[0][0][0]
     # print
     # print back_list[1]
+
     for i in xrange(0, width):
         for j in xrange(0, height):
             for k in xrange(0, len(back_list)):
@@ -48,20 +45,10 @@ def backCamCapture(camera):
     print back_frame
     print len(back_frame)
 
-    # cv2.imshow('back-list[0]', back_list[0])
-    # cv2.imshow('back-list[1]', back_list[1])
-    # cv2.imshow('back Frame', back_frame)
-    #print 'pixel: '
-    #print len(back_list[0])
-    #print len(back_list[0][0])
-    # frame = cv2.resize(frame, (720, 480))
-    # cv2.imshow('back', frame_out)
-    # print 'back list: '
-    # print back_list
-    # print
+    back = cv2.imread('images/frame0.bmp')
+    back = cv2.cvtColor(back, cv2.COLOR_BGR2GRAY)
 
-    # return frame
-
+    return back
 
 
 def frameCamCapture(camera):
@@ -86,7 +73,7 @@ def backgroundSubstraction(back, frame):
     # cv2.multiply(diff_frame, diff_frame, diff_frame, 1)
 
     frame = cv2.resize(frame, (720, 480))
-    cv2.imshow('frame', frame)
+    cv2.imshow('diff_frame', diff_frame)
     return frame
 
 
