@@ -56,28 +56,27 @@ if __name__ == '__main__':
         """
         # ============================================
 
-        frame = cmra.frameCamCapture(img)
+        # frame = cmra.frameCamCapture(img)
 
         # board = brd.lousa(frame)
-        board_list.append(frame)
+        # board_list.append(frame)
         # print board_list
 
 
         # ========================================================================
 
         # ============================= Entropia =================================
-        diff_frame  = cmra.backgroundSubstraction(back, frame )
+        # diff_frame  = cmra.backgroundSubstraction(back, frame )
         # diff_frame = cv2.imread('images/big_black.jpg')
-        probs_list = cmra.probArray(cmra.histogram(diff_frame),
-                                    cmra.imageSize(diff_frame))
+        # probs_list = cmra.probArray(cmra.histogram(diff_frame), cmra.imageSize(diff_frame))
 
-        shannon_list.append(cmra.shannonEntropy(probs_list))
-        print "Lista de Entropias"
-        print shannon_list
-        print
-        print "Index: "
-        print np.argmax(shannon_list)
-        print
+        # shannon_list.append(cmra.shannonEntropy(probs_list))
+        # print "Lista de Entropias"
+        # print shannon_list
+        # print
+        # print "Index: "
+        # print np.argmax(shannon_list)
+        # print
         # --> np.argmax() para saber qual o indice que comtem a imagem com
         # maior quantidade de infirmacao
         # ========================================================================
@@ -94,7 +93,7 @@ if __name__ == '__main__':
         #cv2.imshow('frame', board_list[i])
         # ========================================================================
 
-        i += 1
+        # i += 1
 
         k = cv2.waitKey(0) & 0xff
 
@@ -102,7 +101,7 @@ if __name__ == '__main__':
             break
 
         if k == 122:
-            # cmra.backCamCapture(img)
+            cmra.backCamCapture(img)
             # ================ RASP CAM ==================
             """
             camera.capture('images/back.jpg')
