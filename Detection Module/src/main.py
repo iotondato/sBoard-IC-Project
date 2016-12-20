@@ -6,8 +6,8 @@
 
 import cv2
 import numpy as np
-# from picamera.array import PiRGBArray
-# from picamera import PiCamera
+from picamera.array import PiRGBArray
+from picamera import PiCamera
 import time
 import board as brd
 import cmra
@@ -21,15 +21,16 @@ if __name__ == '__main__':
     i = 0
 
     # ================ RASP CAM ==================
-    """
     camera = PiCamera()
-    camera.resolution = (720, 480)
+    #camera.resolution = (180, 140)
     camera.framerate = 15
-    """
+    rawCapture = PiRGBArray(camera)
+
+    #camera.capture(rawCapture, format = "bgr")
     # ============================================
 
-    img = cv2.VideoCapture(0)
-    time.sleep(0.1)
+    #img = cv2.VideoCapture(0)
+    #time.sleep(0.1)
 
     """
     back_list = [[[123, 125, 154],
@@ -50,26 +51,16 @@ if __name__ == '__main__':
 
     """
 
-    back_list = cmra.backCamCapture(img)
+    back_list = cmra.backCamCapture(camera, rawCapture)
     back_mu = cmra.median(back_list)
     back_sig = cmra.standardDeviation(back_list, back_mu)
 
-    # ================ RASP CAM ==================
-    """
-    camera.capture('images/back.jpg')
-    time.sleep(30)
-    back = cv2.imread('images/back.jpg')
-    back = cv2.cvtColor(back, cv2.COLOR_BGR2GRAY)
-    """
-    # ============================================
+    print 'fundo capturado'    
 
     while True:
         # ====================== Captura Do Frame da Lousa =======================
         # ================ RASP CAM ==================
-        """
-        camera.capture('images/frame.jpg')
-        frame = cv2.imread('images/frame.jpg')
-        """
+        frame = cmra.frameCamCapture(camera, rawCapture)
         # ============================================
 
         """
@@ -81,7 +72,7 @@ if __name__ == '__main__':
         print len(frame[0])
         """
 
-        frame = cmra.frameCamCapture(img)
+        #frame = cmra.frameCamCapture(img)
         board = brd.lousa(frame)
         board_list.append(frame)
         # print board_list
@@ -121,11 +112,11 @@ if __name__ == '__main__':
 
         # ========================== Show Images =================================
         # frame = cv2.resize(frame, (720, 480))
-        cv2.imshow('frame', frame)
+        #cv2.imshow('frame', frame)
         # diff_frame = cv2.resize(diff_frame, (720, 480))
-        cv2.imshow('diff_frame ', diff_frame)
+        #cv2.imshow('diff_frame ', diff_frame)
         # cv2.imshow('Sigma', back_sig)
-        cv2.imshow('Index', board_list[index])
+        #cv2.imshow('Index', board_list[index])
         # ========================================================================
 
         # i += 1

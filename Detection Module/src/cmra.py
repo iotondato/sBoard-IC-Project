@@ -11,15 +11,17 @@ import pylab
 
 # ========= Amostras de Imagens de Fundo ==========#
 
-def backCamCapture(camera):
+def backCamCapture(camera, rawCapture):
     # DESKTOP VERSION
     back_list = []
     px = 0
 
     # Captura 30 imagens para criar a imagem de fundo
     for i in range(0, 30):
-        ret, back_frame = camera.read()
-        back_frame = cv2.resize(back_frame, (180, 140))
+        #ret, back_frame = camera.read()
+        #back_frame = cv2.resize(back_frame, (180, 140))
+        camera.capture(rawCapture, format = "bgr")
+        back_frame = rawCapture.array
         back_frame = frameNormalization(back_frame)
         back_list.append(back_frame)
 
@@ -40,8 +42,10 @@ def backMOG2():
 
 
 def frameCamCapture(camera):
-    ret, frame = camera.read()
-    frame = cv2.resize(frame, (180, 140))
+    #ret, frame = camera.read()
+    #frame = cv2.resize(frame, (180, 140))
+    camera.capture(rawCapture, format = "bgr")
+    frame = rawCapture.array    
     frame = frameNormalization(frame)
     #cv2.imwrite('images/frame.bmp', frame)
     return frame
@@ -150,6 +154,7 @@ def standardDeviation(back_list, back_mu):
     #print 'Frame Desvio Padrao: '
     #print back_sig
     print
+
     #cv2.imwrite('images/back_sig.bmp', back_sig)
     return back_sig
 
@@ -213,7 +218,7 @@ def gaussianSubstractor(frame, back_mu, back_sig):
 
     #print 'norm frame:'
     #print diff_frame
-    diff_frame = imgMultplication(diff_frame, frame)
+    #diff_frame = imgMultplication(diff_frame, frame)
     cv2.imwrite('images/diff_frame.bmp', diff_frame)
     return diff_frame
 
