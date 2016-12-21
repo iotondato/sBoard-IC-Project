@@ -55,34 +55,13 @@ if __name__ == '__main__':
     px = 0
 
     camera = PiCamera()
-    rawCapture = PiRGBArray(camera)
+    #rawCapture = PiRGBArray(camera)
 
     # allow the camera to warmup
     time.sleep(0.1)
-
-    # grab an image from the camera
-    camera.capture(rawCapture, format="bgr")
-
-    # Captura 30 imagens para criar a imagem de fundo
-    for i in range(0, 3):
-        #ret, back_frame = camera.read()
-        #back_frame = cv2.resize(back_frame, (180, 140))
-        #camera.capture(rawCapture, format = "bgr")
-        #back_frame = rawCapture.array
-        back_frame = rawCapture.array
-        print("frame: ")
-        print(back_frame)
-
-        back_frame = cmra.frameNormalization(back_frame)
-        print("Frame Normalizado: ")
-        print(back_frame)
-
-        back_list.append(back_frame)
-        print("Lista de Frames de Fundo:")
-	print(back_list)
    
-    #back_list = cmra.backCamCapture(camera, rawCapture)
-    #back_list = cmra.backCamCapture()
+    back_list = cmra.backCamCapture(camera)
+    
     back_mu = cmra.median(back_list)
     print("Median Back: ")
     print(back_mu)
@@ -97,7 +76,7 @@ if __name__ == '__main__':
         #break
         # ====================== Captura Do Frame da Lousa =======================
         # ================ RASP CAM ==================
-        frame = cmra.frameCamCapture(camera, rawCapture)
+        frame = cmra.frameCamCapture(camera)
         # ============================================
 
         """

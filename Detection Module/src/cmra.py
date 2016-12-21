@@ -13,13 +13,12 @@ from picamera import PiCamera
 import time
 
 # ========= Amostras de Imagens de Fundo ==========#
-
-def backCamCapture(camera, rawCapture):
+def backCamCapture(camera):
     # DESKTOP VERSION
     back_list = []
     px = 0
 
-    camera = PiCamera()
+    #camera = PiCamera()
     rawCapture = PiRGBArray(camera)
 
     # allow the camera to warmup
@@ -35,14 +34,18 @@ def backCamCapture(camera, rawCapture):
         #camera.capture(rawCapture, format = "bgr")
         #back_frame = rawCapture.array
         back_frame = rawCapture.array
+	print("Frame de fundo: ")
+	print(back_frame)
+
         back_frame = frameNormalization(back_frame)
+	print ("Frame Normalizado: ")
+	print(back_frame)
+	
         back_list.append(back_frame)
 
-    #print 'Back List: '
+    print ("Lista de frames de Fundo: ")
     print back_list
-    #print
-    #print len(back_list)
-    return back_list
+    return (back_list)
 
 # =================================================#
 
@@ -57,8 +60,10 @@ def backMOG2():
 def frameCamCapture(camera):
     #ret, frame = camera.read()
     #frame = cv2.resize(frame, (180, 140))
+    rawCapture = PiRGBArray(camera)
     camera.capture(rawCapture, format = "bgr")
     frame = rawCapture.array    
+    
     frame = frameNormalization(frame)
     #cv2.imwrite('images/frame.bmp', frame)
     print("Frame Atual: ")
