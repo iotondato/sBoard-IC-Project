@@ -34,8 +34,10 @@ def backCamCapture(camera):
         #camera.capture(rawCapture, format = "bgr")
         #back_frame = rawCapture.array
         back_frame = rawCapture.array
-	print("Frame de fundo: ")
+	back_frame = cv2.resize(back_frame, (240, 120))
+        print("Frame de fundo: ")
 	print(back_frame)
+        
 
         back_frame = frameNormalization(back_frame)
 	print ("Frame Normalizado: ")
@@ -62,7 +64,8 @@ def frameCamCapture(camera):
     #frame = cv2.resize(frame, (180, 140))
     rawCapture = PiRGBArray(camera)
     camera.capture(rawCapture, format = "bgr")
-    frame = rawCapture.array    
+    frame = rawCapture.array
+    frame = cv2.resize(frame, (240, 120))    
     
     frame = frameNormalization(frame)
     #cv2.imwrite('images/frame.bmp', frame)
