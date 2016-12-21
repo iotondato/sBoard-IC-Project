@@ -8,6 +8,9 @@ import numpy as np
 import cv2
 import math
 import pylab
+from picamera.array import PiRGBArray
+from picamera import PiCamera
+import time
 
 # ========= Amostras de Imagens de Fundo ==========#
 
@@ -16,17 +19,27 @@ def backCamCapture(camera, rawCapture):
     back_list = []
     px = 0
 
+    camera = PiCamera()
+    rawCapture = PiRGBArray(camera)
+
+    # allow the camera to warmup
+    time.sleep(0.1)
+
+    # grab an image from the camera
+    camera.capture(rawCapture, format="bgr")
+
     # Captura 30 imagens para criar a imagem de fundo
-    for i in range(0, 30):
+    for i in range(0, 3):
         #ret, back_frame = camera.read()
         #back_frame = cv2.resize(back_frame, (180, 140))
-        camera.capture(rawCapture, format = "bgr")
+        #camera.capture(rawCapture, format = "bgr")
+        #back_frame = rawCapture.array
         back_frame = rawCapture.array
         back_frame = frameNormalization(back_frame)
         back_list.append(back_frame)
 
     #print 'Back List: '
-    #print back_list
+    print back_list
     #print
     #print len(back_list)
     return back_list
@@ -48,6 +61,8 @@ def frameCamCapture(camera):
     frame = rawCapture.array    
     frame = frameNormalization(frame)
     #cv2.imwrite('images/frame.bmp', frame)
+    print("Frame Atual: ")
+    print(frame)
     return frame
 
 # =================================================#

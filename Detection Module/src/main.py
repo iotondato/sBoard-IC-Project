@@ -21,11 +21,10 @@ if __name__ == '__main__':
     i = 0
 
     # ================ RASP CAM ==================
-    camera = PiCamera()
+    #camera = PiCamera()
     #camera.resolution = (180, 140)
-    camera.framerate = 15
-    rawCapture = PiRGBArray(camera)
-
+    #camera.framerate = 15
+    #rawCapture = PiRGBArray(camera)
     #camera.capture(rawCapture, format = "bgr")
     # ============================================
 
@@ -51,13 +50,51 @@ if __name__ == '__main__':
 
     """
 
-    back_list = cmra.backCamCapture(camera, rawCapture)
+    print "Ola estou aqui"
+    back_list = []
+    px = 0
+
+    camera = PiCamera()
+    rawCapture = PiRGBArray(camera)
+
+    # allow the camera to warmup
+    time.sleep(0.1)
+
+    # grab an image from the camera
+    camera.capture(rawCapture, format="bgr")
+
+    # Captura 30 imagens para criar a imagem de fundo
+    for i in range(0, 3):
+        #ret, back_frame = camera.read()
+        #back_frame = cv2.resize(back_frame, (180, 140))
+        #camera.capture(rawCapture, format = "bgr")
+        #back_frame = rawCapture.array
+        back_frame = rawCapture.array
+        print("frame: ")
+        print(back_frame)
+
+        back_frame = cmra.frameNormalization(back_frame)
+        print("Frame Normalizado: ")
+        print(back_frame)
+
+        back_list.append(back_frame)
+        print("Lista de Frames de Fundo:")
+	print(back_list)
+   
+    #back_list = cmra.backCamCapture(camera, rawCapture)
+    #back_list = cmra.backCamCapture()
     back_mu = cmra.median(back_list)
+    print("Median Back: ")
+    print(back_mu)
+
     back_sig = cmra.standardDeviation(back_list, back_mu)
-
+    print ("Desvio Padrao: ")
+    print(back_sig)
+    
     print 'fundo capturado'    
-
+    
     while True:
+        #break
         # ====================== Captura Do Frame da Lousa =======================
         # ================ RASP CAM ==================
         frame = cmra.frameCamCapture(camera, rawCapture)
@@ -82,6 +119,8 @@ if __name__ == '__main__':
         # diff_frame  = cmra.backgroundSubstraction(frame, back)
         # diff_frame = cmra.substractionMOG2(frame, back_mu)
         diff_frame = cmra.gaussianSubstractor(frame, back_mu, back_sig)
+        print ("Diff Frame")
+	print (diff_frame)
         # diff_frame = cmra.imgMultplication(diff_frame, frame)
 
         # diff_frame = cv2.imread('images/big_black.jpg')
@@ -140,5 +179,5 @@ if __name__ == '__main__':
             """
            # ============================================
 
-    img.release()
-    cv2.destroyAllWindows()
+    #img.release()
+    #cv2.destroyAllWindows()
