@@ -12,8 +12,6 @@ import time
 import board as brd
 import cmra
 
-#def backDeinition():
-
 
 if __name__ == '__main__':
     board_list = []
@@ -21,7 +19,6 @@ if __name__ == '__main__':
     probs_list = []
     i = 0
 
-    # lista_de_teste()
     # ================ RASP CAM ==================
     """
     camera = PiCamera()
@@ -33,7 +30,11 @@ if __name__ == '__main__':
     img = cv2.VideoCapture(0)
     time.sleep(0.1)
 
-    back = cmra.backCamCapture(img)
+    back_list = cmra.backCamCapture(img)
+    back_mu = cmra.median(back_list)
+    back_sig = cmra.variance(back_list, back_mu)
+
+    #back = cmra.backMOG2()
 
     # ================ RASP CAM ==================
     """
@@ -46,7 +47,6 @@ if __name__ == '__main__':
 
     while True:
         # ====================== Captura Do Frame da Lousa =======================
-
         # ================ RASP CAM ==================
         """
         camera.capture('images/frame.jpg')
@@ -59,21 +59,31 @@ if __name__ == '__main__':
         # board = brd.lousa(frame)
         # board_list.append(frame)
         # print board_list
-
-
         # ========================================================================
 
         # ============================= Entropia =================================
-        diff_frame  = cmra.backgroundSubstraction(back, frame )
+        # diff_frame  = cmra.backgroundSubstraction(frame, back)
+        #diff_frame = cmra.substractionMOG2(frame, back_mu)
+        diff_frame = cmra.gaussianSubstractor(frame, back_mu, back_sig)
         # diff_frame = cv2.imread('images/big_black.jpg')
-        probs_list = cmra.probArray(cmra.histogram(diff_frame), cmra.imageSize(diff_frame))
 
-        shannon_list.append(cmra.shannonEntropy(probs_list))
+        #cmra.median()
+
+
+        #probs_list = cmra.probArray(cmra.histogram(diff_frame), cmra.imageSize(diff_frame))
+
+        #shannon_list.append(cmra.shannonEntropy(probs_list))
+
         print "Lista de Entropias"
         print shannon_list
         print
+
+        print "shannon_list size:"
+        print len(shannon_list)
+        print
+
         print "Index: "
-        print np.argmax(shannon_list)
+        #eprint np.argmax(shannon_list)
         print
         # --> np.argmax() para saber qual o indice que comtem a imagem com
         # maior quantidade de infirmacao
@@ -85,29 +95,28 @@ if __name__ == '__main__':
         # ========================================================================
 
         # ========================== Show Images =================================
-
+        #frame = cv2.resize(frame, (720, 480))
         #cv2.imshow('diff_frame', diff_frame)
-        #cv2.imshow('back', back)
-        #cv2.imshow('frame', board_list[i])
+        #cv2.imshow('Mu', back_mu)
+        #cv2.imshow('Sigma', back_sig)
         # ========================================================================
 
         # i += 1
 
-        k = cv2.waitKey(0) & 0xff
+        k = cv2.waitKey(30) & 0xff
 
         if k == 27:
             break
 
-        if k == 122:
-            cmra.backCamCapture(img)
+        """elif k == 122:
+            #  cmra.backCamCapture(img)
+            back = cmra.backMOG2()
             # ================ RASP CAM ==================
-            """
+
             camera.capture('images/back.jpg')
             back = cv2.iread('images/back.jpg')
             back = cv2.cvtColor(back, cv2.COLOR_BGR2GRAY)
             """
             # ============================================
-
-    #img.release()
-    #cv2.destroyAllWindows()
-
+    img.release()
+    cv2.destroyAllWindows()
