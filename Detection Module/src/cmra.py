@@ -10,31 +10,43 @@ import math
 import scipy.stats
 import pylab
 import matplotlib
+
+
 # import matplotlib.pyplot as plt
 # import os, PIL
 # from PIL import Image
 
-#========= Amostras de Imagens de Fundo ==========#
+# ========= Amostras de Imagens de Fundo ==========#
 
 def backCamCapture(camera):
     # DESKTOP VERSION
     back_list = []
     px = 0
 
-    #Captura 30 imagens para criar a imagem de fundo
-    for i in range(1, 11):
+    # Captura 30 imagens para criar a imagem de fundo
+    for i in range(0, 99):
         ret, back_frame = camera.read()
-        back_frame = cv2.cvtColor(back_frame, cv2.COLOR_BGR2GRAY)
-        height, width = back_frame.shape[:2]
-        cv2.imwrite('images/back_frame' + str(i) + '.bmp', back_frame)
+        back_frame = cv2.resize(back_frame, (160, 120))
+        back_frame = frameNormalization(back_frame)
+        #cv2.imwrite('images/back_frame' + str(i) + '.bmp', back_frame)
         back_list.append(back_frame)
 
+    print 'Back List: '
     print back_list
     print
     print len(back_list)
     return back_list
 
-#=================================================#
+
+def backGround(img):
+    back_list = backCamCapture(img)
+    normal_back = backgroundNormalization(back_list)
+    back_mu = median(normal_back)
+    back_sig = standardDeviation(normal_back, back_mu)
+    # diff_frame = cmra.gaussianSubstractor( back_mu, back_sig)
+    return back_mu, back_sig
+
+# =================================================#
 
 
 # ============= Captura de imagens ===============#
@@ -46,15 +58,54 @@ def backMOG2():
 
 def frameCamCapture(camera):
     ret, frame = camera.read()
-    #frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    cv2.imwrite('images/frame.bmp', frame)
-    #i += 1
+    frame = cv2.resize(frame, (160, 120))
+    frame = frameNormalization(frame)
+    #cv2.imwrite('images/frame.bmp', frame)
     return frame
 
-#=================================================#
+# =================================================#
 
 
-#============= Operacoes com Imagens =============#
+# ============= Operacoes com Imagens =============#
+
+def backgroundNormalization(back_list):
+    #height, width = back_list[0].shape[:2]
+    height = len(back_list[0])
+    width = len(back_list[0][0])
+    lenght = len(back_list)
+    npx = 0
+    #back_list[i].astype(np.float_)
+    Nback_list = np.zeros(shape=(height, width, lenght), dtype=np.float_)
+
+    for i in xrange(0, height):
+        for j in xrange(0, width):
+            for k in xrange(0, len(back_list)):
+                npx = np.divide(back_list[k][i][j] + 0.0, 255)
+                Nback_list[i][j][k] = npx
+
+    return Nback_list
+
+
+def frameNormalization(frame):
+    rgblist = len(frame[0][0])
+    height = len(frame)
+    width = len(frame[0])
+    Nframe = np.zeros(shape=(height, width, rgblist), dtype=float)
+
+    for i in xrange(0, height):
+        for j in xrange(0, width):
+            npxr = np.divide(frame[i][j][0] + 0.0, 255)
+            Nframe[i][j][0] = npxr
+            npxg = np.divide(frame[i][j][1] + 0.0, 255)
+            Nframe[i][j][1] = npxg
+            npxb = np.divide(frame[i][j][2] + 0.0, 255)
+            Nframe[i][j][2] = npxb
+            #npx = np.divide(frame[i][j] + 0.0, 255)
+            #Nframe[i][j] = npx
+            npx = 0
+
+    return Nframe
+
 
 def imageSize(frame):
     height, width = frame.shape[:2]
@@ -65,69 +116,80 @@ def imageSize(frame):
 def suma(Img_histogram):
     sum = 0
     for i in range(0, len(Img_histogram)):
-        sum  += Img_histogram[i]
+        sum += Img_histogram[i]
     return sum
 
 
 def median(back_list):
-    """back_list = [[[179, 176, 165],
-                  [168, 154, 158],
-                  [157, 158, 155]],
+    pxr = 0.0
+    pxg = 0.0
+    pxb = 0.0
+    height = len(back_list[0])
+    width = len(back_list[0][0])
+    rgblist  = len(back_list[0][0][0])
 
-                 [[158, 161, 158],
-                  [161, 156, 154],
-                  [169, 171, 180]],
+    print rgblist
 
-                 [[186, 184, 171],
-                  [169, 154, 157],
-                  [168, 159, 157]]]"""
+    back_mu = np.zeros(shape=(height, width, rgblist), dtype=float)
 
-    height, width = back_list[0].shape[:2]
-    #height = 3
-    #width = 3
-    px = 0
-    back_mu = np.zeros(shape=(height, width))
-
-    for i in xrange(0, width):
-        for j in xrange(0, height):
+    for i in xrange(0, height):
+        for j in xrange(0, width):
             for k in xrange(0, len(back_list)):
-                px += back_list[k][j][i]
-            px = px / len(back_list)
-            back_mu[j][i] =  px
-            px = 0
+                pxr += back_list[k][i][j][0]
+                pxg += back_list[k][i][j][1]
+                pxb += back_list[k][i][j][2]
+            pxr /= len(back_list)
+            pxg /= len(back_list)
+            pxb /= len(back_list)
+            back_mu[i][j][0] = pxr
+            back_mu[i][j][1] = pxg
+            back_mu[i][j][2] = pxb
+
+    # back_mu = np.mean(back_list)
 
     print 'Frame Medio: '
     print back_mu
     print
-
-    cv2.imwrite('images/back_median.bmp', back_mu)
+    cv2.imwrite('images/back_mu.bmp', back_mu)
     return back_mu
 
 
-def variance(back_list, back_mu):
-    height, width = back_list[0].shape[:2]
-    back_sig = np.zeros(shape=(height, width))
-    des = 0
-    vri = 0
-    px = 0
+def standardDeviation(back_list, back_mu):
+    height = len(back_list[0])
+    width = len(back_list[0][0])
+    rgblist = len(back_list[0][0][0])
 
-    for i in xrange(0, width):
-        for j in xrange(0, height):
+    back_sig = np.zeros(shape=(height, width, rgblist), dtype=float)
+    vrir = 0
+    vrig = 0
+    vrib = 0
+
+    for i in xrange(0, height):
+        for j in xrange(0, width):
             for k in xrange(0, len(back_list)):
-                des += (back_list[k][j][i] - back_mu[j][i])**2
-            des = des / len(back_list)
-            vri = pow(des, 0.5)
-            back_sig[j][i] = vri
-            vri = 0
+                vrir += (back_list[k][i][j][0] - back_mu[i][j][0]) ** 2
+                vrig += (back_list[k][i][j][1] - back_mu[i][j][1]) ** 2
+                vrib += (back_list[k][i][j][2] - back_mu[i][j][2]) ** 2
+
+            vrir /= len(back_list)
+            vrir **= 0.5
+            vrig /= len(back_list)
+            vrig **= 0.5
+            vrib /= len(back_list)
+            vrib **= 0.5
+
+            back_sig[i][j][0] = vrir
+            back_sig[i][j][1] = vrig
+            back_sig[i][j][2] = vrib
 
     print 'Frame Desvio Padrao: '
     print back_sig
     print
-
-    cv2.imwrite('images/back_variance.bmp', back_sig)
+    #cv2.imwrite('images/back_sig.bmp', back_sig)
     return back_sig
 
-#=================================================#
+
+# =================================================#
 
 
 # ======= Metodos de Subtracao de Fundo ==========#
@@ -153,48 +215,55 @@ def substractionMOG2(frame, fgbg):
 
 
 def gaussianSubstractor(frame, back_mu, back_sig):
-    height, width = back_mu.shape[:2]
+    height = len(frame)
+    width = len(frame[0])
+    #rgblist = len(frame[0][0])
     nopdf = 0
-    diff_frame = np.zeros(shape=(height, width))
+    diff_frame = np.zeros(shape=(height, width), dtype=float)
 
-    for i in xrange(0, width):
-        for j in xrange(0, height):
+    for i in xrange(0, height):
+        for j in xrange(0, width):
+            normdr = pylab.normpdf(frame[i][j][0], back_mu[i][j][0], back_sig[i][j][0])
+            #print 'R: '
+            #print normdr
+            #print
 
-            nopdfr = pylab.normpdf(frame[j][i][0], back_mu[j][i], back_sig[j][i])
-            nopdfg = pylab.normpdf(frame[j][i][1], back_mu[j][i], back_sig[j][i])
-            nopdfb = pylab.normpdf(frame[j][i][2], back_mu[j][i], back_sig[j][i])
+            normdg = pylab.normpdf(frame[i][j][1], back_mu[i][j][1], back_sig[i][j][1])
+            #print 'G: '
+            #print normdg
+            #print
 
-            nopdf = pow(nopdfr*nopdfg*nopdfb, 0.333333)
+            normdb = pylab.normpdf(frame[i][j][2], back_mu[i][j][2], back_sig[i][j][2])
+            #print 'B: '
+            #print normdb
+            #print
 
-            print nopdfr
-            print nopdfg
-            print nopdfb
-            print nopdf
+            nopdf = (normdr*normdg*normdb)**0.33333333333333333333333333333333333333333
+            #print nopdf
 
-            #px = limiarization(nopdf)
-            #diff_frame[j][i] = nopdf
+            px = limiarization(nopdf)
+            diff_frame[i][j] = px
 
-    print frame
-    print
+    print 'norm frame:'
     print diff_frame
     print
-    #cv2.imwrite('images/diff_frame.bmp', diff_frame)
-    cv2.imshow('diff frame', diff_frame)
+    cv2.imwrite('images/diff_frame.bmp', diff_frame)
     return diff_frame
 
 
 def limiarization(value):
-    px = 0
-    if value > 1:
-        px = 255
+    if (value > 1):
+        value = 1
+    px = (1- value) * 255
     return px
 
-#def normalDistribuition(frame):
+
+# def normalDistribuition(frame):
 
 
 # ================================================#
 
-# ============ Analise de Imagens ================#
+# ============ Entropy =============== #
 
 def histogram(diff_frame):
     hist, bins = np.histogram(diff_frame.ravel(), 10, [0, 256])
@@ -214,9 +283,11 @@ def shannonEntropy(list_prob):
     list_shannon = []
     for i in range(0, len(list_prob)):
         if list_prob[i] != 0:
-            SE += list_prob[i] *  math.log(list_prob[i], 2)
+            SE += list_prob[i] * math.log(list_prob[i], 2)
     SE = -SE
     return SE
 
 
-# ================================================#
+    # ================================================#
+
+    # =============================================== #

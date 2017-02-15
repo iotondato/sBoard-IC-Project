@@ -17,6 +17,7 @@ if __name__ == '__main__':
     board_list = []
     shannon_list = []
     probs_list = []
+    nback_list = []
     i = 0
 
     # ================ RASP CAM ==================
@@ -30,11 +31,28 @@ if __name__ == '__main__':
     img = cv2.VideoCapture(0)
     time.sleep(0.1)
 
+    """
+    back_list = [[[123, 125, 154],
+                  [168, 164, 162],
+                  [166, 118, 123]],
+
+                 [[124, 121, 158],
+                  [161, 166, 164],
+                  [169, 114, 120]],
+
+                 [[125, 124, 151],
+                  [163, 164, 161],
+                  [168, 119, 121]],
+
+                 [[122, 127, 155],
+                  [165, 163, 162],
+                  [168, 121, 125]]]
+
+    """
+
     back_list = cmra.backCamCapture(img)
     back_mu = cmra.median(back_list)
-    back_sig = cmra.variance(back_list, back_mu)
-
-    #back = cmra.backMOG2()
+    back_sig = cmra.standardDeviation(back_list, back_mu)
 
     # ================ RASP CAM ==================
     """
@@ -54,37 +72,54 @@ if __name__ == '__main__':
         """
         # ============================================
 
+        """
+        frame =   [[122, 124, 153],
+                   [168, 233, 164],
+                   [167, 113, 124]]
+
+        print len(frame)
+        print len(frame[0])
+        """
+
         frame = cmra.frameCamCapture(img)
+        print 'NFrame: '
+        print frame
+        #print len(frame)
+        #print len(frame[0])
+        #print len(frame[0][0])
+
 
         # board = brd.lousa(frame)
         # board_list.append(frame)
         # print board_list
         # ========================================================================
 
-        # ============================= Entropia =================================
+        # =======================Subtracao De Fundo ==============================
         # diff_frame  = cmra.backgroundSubstraction(frame, back)
         #diff_frame = cmra.substractionMOG2(frame, back_mu)
         diff_frame = cmra.gaussianSubstractor(frame, back_mu, back_sig)
         # diff_frame = cv2.imread('images/big_black.jpg')
-
         #cmra.median()
+        # ========================================================================
+        #break
 
-
-        #probs_list = cmra.probArray(cmra.histogram(diff_frame), cmra.imageSize(diff_frame))
+        # ============================= Entropia =================================
+        """probs_list = cmra.probArray(cmra.histogram(diff_frame),
+                                     cmra.imageSize(diff_frame))"""
 
         #shannon_list.append(cmra.shannonEntropy(probs_list))
 
-        print "Lista de Entropias"
-        print shannon_list
-        print
+        #print "Lista de Entropias"
+        #print shannon_list
+        #print
 
-        print "shannon_list size:"
-        print len(shannon_list)
-        print
+        #print "shannon_list size:"
+        #print len(shannon_list)
+        #print
 
-        print "Index: "
+        #print "Index: "
         #eprint np.argmax(shannon_list)
-        print
+        #print
         # --> np.argmax() para saber qual o indice que comtem a imagem com
         # maior quantidade de infirmacao
         # ========================================================================
@@ -96,8 +131,9 @@ if __name__ == '__main__':
 
         # ========================== Show Images =================================
         #frame = cv2.resize(frame, (720, 480))
-        #cv2.imshow('diff_frame', diff_frame)
-        #cv2.imshow('Mu', back_mu)
+        cv2.imshow('frame', frame)
+        #diff_frame = cv2.resize(diff_frame, (720, 480))
+        cv2.imshow('diff_frame ', diff_frame)
         #cv2.imshow('Sigma', back_sig)
         # ========================================================================
 
@@ -108,15 +144,20 @@ if __name__ == '__main__':
         if k == 27:
             break
 
-        """elif k == 122:
-            #  cmra.backCamCapture(img)
-            back = cmra.backMOG2()
+        elif k == 122:
+            #cmra.backCamCapture(img)
+            #back = cmra.backMOG2()
+            #bg = cmra.backGround(img)
             # ================ RASP CAM ==================
-
+            """
             camera.capture('images/back.jpg')
             back = cv2.iread('images/back.jpg')
             back = cv2.cvtColor(back, cv2.COLOR_BGR2GRAY)
             """
-            # ============================================
+           # ============================================
+    """
+    frame = cmra.frameCamCapture(img)
+    diff_frame = cmra.gaussianSubstractor(frame, back_mu, back_sig)
+    """
     img.release()
     cv2.destroyAllWindows()
