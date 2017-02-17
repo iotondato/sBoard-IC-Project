@@ -82,15 +82,15 @@ if __name__ == '__main__':
         """
 
         frame = cmra.frameCamCapture(img)
-        print 'NFrame: '
-        print frame
+        #print 'NFrame: '
+        #print frame
         #print len(frame)
         #print len(frame[0])
         #print len(frame[0][0])
 
 
-        # board = brd.lousa(frame)
-        # board_list.append(frame)
+        board = brd.lousa(frame)
+        board_list.append(frame)
         # print board_list
         # ========================================================================
 
@@ -104,24 +104,19 @@ if __name__ == '__main__':
         #break
 
         # ============================= Entropia =================================
-        """probs_list = cmra.probArray(cmra.histogram(diff_frame),
-                                     cmra.imageSize(diff_frame))"""
+        probs_list = cmra.probArray(cmra.histogram(diff_frame),cmra.imageSize(diff_frame))
+        shannon_list.append(cmra.shannonEntropy(probs_list))
+        index = np.argmax(shannon_list)
 
-        #shannon_list.append(cmra.shannonEntropy(probs_list))
+        print "shannon_list last Entropy:"
+        print "Index [" + str(len(shannon_list)-1) + "]: " + str(shannon_list[len(shannon_list)-1])
+        print
+        print "Index [" + str(index) + "]: " + str(shannon_list[index])
+        print
+        # ========================================================================
 
-        #print "Lista de Entropias"
-        #print shannon_list
-        #print
+        # ===================== Identifcacao de conteudo =========================
 
-        #print "shannon_list size:"
-        #print len(shannon_list)
-        #print
-
-        #print "Index: "
-        #eprint np.argmax(shannon_list)
-        #print
-        # --> np.argmax() para saber qual o indice que comtem a imagem com
-        # maior quantidade de infirmacao
         # ========================================================================
 
         # ============================ Envio de Imagem ===========================
@@ -135,6 +130,7 @@ if __name__ == '__main__':
         #diff_frame = cv2.resize(diff_frame, (720, 480))
         cv2.imshow('diff_frame ', diff_frame)
         #cv2.imshow('Sigma', back_sig)
+        cv2.imshow('Index', back_list[index])
         # ========================================================================
 
         # i += 1
@@ -145,9 +141,11 @@ if __name__ == '__main__':
             break
 
         elif k == 122:
-            #cmra.backCamCapture(img)
-            #back = cmra.backMOG2()
-            #bg = cmra.backGround(img)
+
+            back_list = cmra.backCamCapture(img)
+            back_mu = cmra.median(back_list)
+            back_sig = cmra.standardDeviation(back_list, back_mu)
+
             # ================ RASP CAM ==================
             """
             camera.capture('images/back.jpg')
@@ -155,9 +153,6 @@ if __name__ == '__main__':
             back = cv2.cvtColor(back, cv2.COLOR_BGR2GRAY)
             """
            # ============================================
-    """
-    frame = cmra.frameCamCapture(img)
-    diff_frame = cmra.gaussianSubstractor(frame, back_mu, back_sig)
-    """
+
     img.release()
     cv2.destroyAllWindows()

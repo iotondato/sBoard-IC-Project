@@ -24,17 +24,16 @@ def backCamCapture(camera):
     px = 0
 
     # Captura 30 imagens para criar a imagem de fundo
-    for i in range(0, 99):
+    for i in range(0, 30):
         ret, back_frame = camera.read()
         back_frame = cv2.resize(back_frame, (160, 120))
         back_frame = frameNormalization(back_frame)
-        #cv2.imwrite('images/back_frame' + str(i) + '.bmp', back_frame)
         back_list.append(back_frame)
 
-    print 'Back List: '
-    print back_list
-    print
-    print len(back_list)
+    #print 'Back List: '
+    #print back_list
+    #print
+    #print len(back_list)
     return back_list
 
 
@@ -67,25 +66,6 @@ def frameCamCapture(camera):
 
 
 # ============= Operacoes com Imagens =============#
-
-def backgroundNormalization(back_list):
-    #height, width = back_list[0].shape[:2]
-    height = len(back_list[0])
-    width = len(back_list[0][0])
-    lenght = len(back_list)
-    npx = 0
-    #back_list[i].astype(np.float_)
-    Nback_list = np.zeros(shape=(height, width, lenght), dtype=np.float_)
-
-    for i in xrange(0, height):
-        for j in xrange(0, width):
-            for k in xrange(0, len(back_list)):
-                npx = np.divide(back_list[k][i][j] + 0.0, 255)
-                Nback_list[i][j][k] = npx
-
-    return Nback_list
-
-
 def frameNormalization(frame):
     rgblist = len(frame[0][0])
     height = len(frame)
@@ -147,8 +127,8 @@ def median(back_list):
 
     # back_mu = np.mean(back_list)
 
-    print 'Frame Medio: '
-    print back_mu
+    #print 'Frame Medio: '
+    #print back_mu
     print
     cv2.imwrite('images/back_mu.bmp', back_mu)
     return back_mu
@@ -182,8 +162,8 @@ def standardDeviation(back_list, back_mu):
             back_sig[i][j][1] = vrig
             back_sig[i][j][2] = vrib
 
-    print 'Frame Desvio Padrao: '
-    print back_sig
+    #print 'Frame Desvio Padrao: '
+    #print back_sig
     print
     #cv2.imwrite('images/back_sig.bmp', back_sig)
     return back_sig
@@ -224,28 +204,14 @@ def gaussianSubstractor(frame, back_mu, back_sig):
     for i in xrange(0, height):
         for j in xrange(0, width):
             normdr = pylab.normpdf(frame[i][j][0], back_mu[i][j][0], back_sig[i][j][0])
-            #print 'R: '
-            #print normdr
-            #print
-
             normdg = pylab.normpdf(frame[i][j][1], back_mu[i][j][1], back_sig[i][j][1])
-            #print 'G: '
-            #print normdg
-            #print
-
             normdb = pylab.normpdf(frame[i][j][2], back_mu[i][j][2], back_sig[i][j][2])
-            #print 'B: '
-            #print normdb
-            #print
-
             nopdf = (normdr*normdg*normdb)**0.33333333333333333333333333333333333333333
-            #print nopdf
-
             px = limiarization(nopdf)
             diff_frame[i][j] = px
 
-    print 'norm frame:'
-    print diff_frame
+    #print 'norm frame:'
+    #print diff_frame
     print
     cv2.imwrite('images/diff_frame.bmp', diff_frame)
     return diff_frame
@@ -263,7 +229,7 @@ def limiarization(value):
 
 # ================================================#
 
-# ============ Entropy =============== #
+# ==================== Entropy ================== #
 
 def histogram(diff_frame):
     hist, bins = np.histogram(diff_frame.ravel(), 10, [0, 256])
@@ -287,7 +253,6 @@ def shannonEntropy(list_prob):
     SE = -SE
     return SE
 
+# ================================================#
 
-    # ================================================#
-
-    # =============================================== #
+# =============================================== #
