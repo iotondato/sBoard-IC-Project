@@ -82,13 +82,6 @@ if __name__ == '__main__':
         """
 
         frame = cmra.frameCamCapture(img)
-        #print 'NFrame: '
-        #print frame
-        #print len(frame)
-        #print len(frame[0])
-        #print len(frame[0][0])
-
-
         board = brd.lousa(frame)
         board_list.append(frame)
         # print board_list
@@ -96,12 +89,14 @@ if __name__ == '__main__':
 
         # =======================Subtracao De Fundo ==============================
         # diff_frame  = cmra.backgroundSubstraction(frame, back)
-        #diff_frame = cmra.substractionMOG2(frame, back_mu)
+        # diff_frame = cmra.substractionMOG2(frame, back_mu)
         diff_frame = cmra.gaussianSubstractor(frame, back_mu, back_sig)
+        # diff_frame = cmra.imgMultplication(diff_frame, frame)
+
         # diff_frame = cv2.imread('images/big_black.jpg')
-        #cmra.median()
+        # cmra.median()
         # ========================================================================
-        #break
+        # break
 
         # ============================= Entropia =================================
         probs_list = cmra.probArray(cmra.histogram(diff_frame),cmra.imageSize(diff_frame))
@@ -125,12 +120,12 @@ if __name__ == '__main__':
         # ========================================================================
 
         # ========================== Show Images =================================
-        #frame = cv2.resize(frame, (720, 480))
+        # frame = cv2.resize(frame, (720, 480))
         cv2.imshow('frame', frame)
-        #diff_frame = cv2.resize(diff_frame, (720, 480))
+        # diff_frame = cv2.resize(diff_frame, (720, 480))
         cv2.imshow('diff_frame ', diff_frame)
-        #cv2.imshow('Sigma', back_sig)
-        cv2.imshow('Index', back_list[index])
+        # cv2.imshow('Sigma', back_sig)
+        cv2.imshow('Index', board_list[index])
         # ========================================================================
 
         # i += 1

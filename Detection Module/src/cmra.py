@@ -7,14 +7,7 @@
 import numpy as np
 import cv2
 import math
-import scipy.stats
 import pylab
-import matplotlib
-
-
-# import matplotlib.pyplot as plt
-# import os, PIL
-# from PIL import Image
 
 # ========= Amostras de Imagens de Fundo ==========#
 
@@ -26,7 +19,7 @@ def backCamCapture(camera):
     # Captura 30 imagens para criar a imagem de fundo
     for i in range(0, 30):
         ret, back_frame = camera.read()
-        back_frame = cv2.resize(back_frame, (160, 120))
+        back_frame = cv2.resize(back_frame, (180, 140))
         back_frame = frameNormalization(back_frame)
         back_list.append(back_frame)
 
@@ -35,15 +28,6 @@ def backCamCapture(camera):
     #print
     #print len(back_list)
     return back_list
-
-
-def backGround(img):
-    back_list = backCamCapture(img)
-    normal_back = backgroundNormalization(back_list)
-    back_mu = median(normal_back)
-    back_sig = standardDeviation(normal_back, back_mu)
-    # diff_frame = cmra.gaussianSubstractor( back_mu, back_sig)
-    return back_mu, back_sig
 
 # =================================================#
 
@@ -57,7 +41,7 @@ def backMOG2():
 
 def frameCamCapture(camera):
     ret, frame = camera.read()
-    frame = cv2.resize(frame, (160, 120))
+    frame = cv2.resize(frame, (180, 140))
     frame = frameNormalization(frame)
     #cv2.imwrite('images/frame.bmp', frame)
     return frame
@@ -66,6 +50,7 @@ def frameCamCapture(camera):
 
 
 # ============= Operacoes com Imagens =============#
+
 def frameNormalization(frame):
     rgblist = len(frame[0][0])
     height = len(frame)
@@ -168,6 +153,22 @@ def standardDeviation(back_list, back_mu):
     #cv2.imwrite('images/back_sig.bmp', back_sig)
     return back_sig
 
+def imgMultplication(diff_frame, frame):
+    height = len(frame)
+    width = len(frame[0])
+    rgblist = len(frame[0][0])
+    diff_mask = np.zeros(shape=(height, width, rgblist), dtype=float)
+
+    for i in xrange(0, height):
+        for j in xrange(0, width):
+            if (diff_frame[i][j] == 255):
+                diff_frame[i][j] = 1
+
+            diff_mask[i][j][0] = diff_frame[i][j] * frame[i][j][0]
+            diff_mask[i][j][1] = diff_frame[i][j] * frame[i][j][1]
+            diff_mask[i][j][2] = diff_frame[i][j] * frame[i][j][2]
+
+    return diff_mask
 
 # =================================================#
 
@@ -212,7 +213,7 @@ def gaussianSubstractor(frame, back_mu, back_sig):
 
     #print 'norm frame:'
     #print diff_frame
-    print
+    diff_frame = imgMultplication(diff_frame, frame)
     cv2.imwrite('images/diff_frame.bmp', diff_frame)
     return diff_frame
 
@@ -220,7 +221,14 @@ def gaussianSubstractor(frame, back_mu, back_sig):
 def limiarization(value):
     if (value > 1):
         value = 1
+
     px = (1- value) * 255
+
+    if (px >= 120):
+        px = 255
+    else:
+        px = 0
+
     return px
 
 
@@ -252,7 +260,5 @@ def shannonEntropy(list_prob):
             SE += list_prob[i] * math.log(list_prob[i], 2)
     SE = -SE
     return SE
-
-# ================================================#
 
 # =============================================== #
