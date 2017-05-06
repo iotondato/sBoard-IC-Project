@@ -11,6 +11,7 @@ import numpy as np
 import time
 import board as brd
 import cmra
+import pytesseract
 
 
 if __name__ == '__main__':
@@ -87,27 +88,28 @@ if __name__ == '__main__':
         # print board_list
         # ========================================================================
 
-        # =======================Subtracao De Fundo ==============================
-        # diff_frame  = cmra.backgroundSubstraction(frame, back)
-        # diff_frame = cmra.substractionMOG2(frame, back_mu)
+        # ======================= Subtracao De Fundo ==============================
         diff_frame = cmra.gaussianSubstractor(frame, back_mu, back_sig)
-        # diff_frame = cmra.imgMultplication(diff_frame, frame)
-
+        diff_frame_b = cmra.morfOperator(diff_frame)
         # diff_frame = cv2.imread('images/big_black.jpg')
-        # cmra.median()
-        # ========================================================================
-        # break
+        # =========================================================================
 
         # ============================= Entropia =================================
-        probs_list = cmra.probArray(cmra.histogram(diff_frame),cmra.imageSize(diff_frame))
+        probs_list = cmra.probArray(cmra.histogram(diff_frame), cmra.imageSize(diff_frame))
         shannon_list.append(cmra.shannonEntropy(probs_list))
         index = np.argmax(shannon_list)
+
+        #print cmra.histogram(diff_frame)
+        #print probs_list
+        #break
 
         print "shannon_list last Entropy:"
         print "Index [" + str(len(shannon_list)-1) + "]: " + str(shannon_list[len(shannon_list)-1])
         print
         print "Index [" + str(index) + "]: " + str(shannon_list[index])
         print
+
+        cv2.imwrite('images/imageSelected'+ '[' + str(index) + ']' + '.bmp', board_list[index])
         # ========================================================================
 
         # ===================== Identifcacao de conteudo =========================
@@ -121,9 +123,13 @@ if __name__ == '__main__':
 
         # ========================== Show Images =================================
         # frame = cv2.resize(frame, (720, 480))
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        stringEntropy = 'Entropy: ' + str(shannon_list[len(shannon_list)-1])
+        cv2.putText(diff_frame, stringEntropy, (10, 110), font, 0.5, (255, 255, 255))
         cv2.imshow('frame', frame)
         # diff_frame = cv2.resize(diff_frame, (720, 480))
         cv2.imshow('diff_frame ', diff_frame)
+        cv2.imshow('diff_frame_b', diff_frame_b)
         # cv2.imshow('Sigma', back_sig)
         cv2.imshow('Index', board_list[index])
         # ========================================================================
@@ -147,7 +153,7 @@ if __name__ == '__main__':
             back = cv2.iread('images/back.jpg')
             back = cv2.cvtColor(back, cv2.COLOR_BGR2GRAY)
             """
-           # ============================================
+            # ============================================
 
     img.release()
     cv2.destroyAllWindows()
