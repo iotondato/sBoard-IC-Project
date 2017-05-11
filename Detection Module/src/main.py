@@ -20,7 +20,7 @@ if __name__ == '__main__':
     probs_list = []
     nback_list = []
     i = 0
-
+    Betters = [50]
     # ================ RASP CAM ==================
     """
     camera = PiCamera()
@@ -54,6 +54,7 @@ if __name__ == '__main__':
     back_list = cmra.backCamCapture(img)
     back_mu = cmra.median(back_list)
     back_sig = cmra.standardDeviation(back_list, back_mu)
+
 
     # ================ RASP CAM ==================
     """
@@ -89,7 +90,10 @@ if __name__ == '__main__':
         # ========================================================================
 
         # ======================= Subtracao De Fundo ==============================
+
         diff_frame = cmra.gaussianSubstractor(frame, back_mu, back_sig)
+        #diff_frame = cmra.imgMultplication(diff_frame, frame)
+        #break
         diff_frame_b = cmra.morfOperator(diff_frame)
         # diff_frame = cv2.imread('images/big_black.jpg')
         # =========================================================================
@@ -97,7 +101,7 @@ if __name__ == '__main__':
         # ============================= Entropia =================================
         probs_list = cmra.probArray(cmra.histogram(diff_frame), cmra.imageSize(diff_frame))
         shannon_list.append(cmra.shannonEntropy(probs_list))
-        index = np.argmax(shannon_list)
+        #index = np.argmax(shannon_list)
 
         #print cmra.histogram(diff_frame)
         #print probs_list
@@ -106,14 +110,15 @@ if __name__ == '__main__':
         print "shannon_list last Entropy:"
         print "Index [" + str(len(shannon_list)-1) + "]: " + str(shannon_list[len(shannon_list)-1])
         print
-        print "Index [" + str(index) + "]: " + str(shannon_list[index])
-        print
+        #print "Index [" + str(index) + "]: " + str(shannon_list[index])
+        #print
 
-        cv2.imwrite('images/imageSelected'+ '[' + str(index) + ']' + '.bmp', board_list[index])
+        #cv2.imwrite('images/imageSelected'+ '[' + str(index) + ']' + '.bmp', board_list[index])
         # ========================================================================
 
         # ===================== Identifcacao de conteudo =========================
-
+        #text = cv2.imread('images/testocr.png')
+        #cmra.OCR(diff_frame)
         # ========================================================================
 
         # ============================ Envio de Imagem ===========================
@@ -126,10 +131,11 @@ if __name__ == '__main__':
         font = cv2.FONT_HERSHEY_SIMPLEX
         stringEntropy = 'Entropy: ' + str(shannon_list[len(shannon_list)-1])
         cv2.putText(diff_frame, stringEntropy, (10, 110), font, 0.5, (255, 255, 255))
+
         cv2.imshow('frame', frame)
         # diff_frame = cv2.resize(diff_frame, (720, 480))
         cv2.imshow('diff_frame ', diff_frame)
-        cv2.imshow('diff_frame_b', diff_frame_b)
+        #cv2.imshow('diff_frame_b', diff_frame_b)
         # cv2.imshow('Sigma', back_sig)
         cv2.imshow('Index', board_list[index])
         # ========================================================================

@@ -13,6 +13,19 @@ import pytesseract
 from tesserocr import PyTessBaseAPI
 
 
+# ============= Captura de imagens ===============#
+
+def frameCamCapture(camera):
+    ret, frame = camera.read()
+    frame = cv2.resize(frame, (320, 180))
+    #frame = cv2.resize(frame, (4, 4))
+    print 'F'
+    print frame
+    print()
+    frame = frameNormalization(frame)
+    #cv2.imwrite('images/frame.bmp', frame)
+    return frame
+
 # ========= Amostras de Imagens de Fundo ==========#
 
 def backCamCapture(camera):
@@ -21,30 +34,13 @@ def backCamCapture(camera):
     px = 0
 
     # Captura 30 imagens para criar a imagem de fundo
-    for i in range(0, 30):
-        ret, back_frame = camera.read()
-        #back_frame = cv2.resize(back_frame, (240, 120))
-        back_frame = frameNormalization(back_frame)
-        back_list.append(back_frame)
+    for i in range(0, 70):
+        backF = frameCamCapture(camera)
+        back_list.append(backF)
 
     return back_list
 
 # =================================================#
-
-
-# ============= Captura de imagens ===============#
-
-def backMOG2():
-    fgbg = cv2.BackgroundSubtractorMOG2(40, 122)
-    return fgbg
-
-
-def frameCamCapture(camera):
-    ret, frame = camera.read()
-    #frame = cv2.resize(frame, (240, 120))
-    frame = frameNormalization(frame)
-    #cv2.imwrite('images/frame.bmp', frame)
-    return frame
 
 # =================================================#
 
@@ -58,7 +54,7 @@ def frameNormalization(frame):
     Nframe = np.zeros(shape=(height, width, rgblist), dtype=float)
 
     #Nframe  = frame / 255
-    Nframe  = np.divide(frame + 0.0, 255)
+    frame  = np.divide(frame + 0.0, 255)
 
     """for i in xrange(0, height):
         for j in xrange(0, width):
@@ -72,7 +68,10 @@ def frameNormalization(frame):
             #Nframe[i][j] = npx
             npx = 0
     """
-    return Nframe
+    print "Frame normalizado: "
+    print frame
+    print
+    return frame
 
 
 def imageSize(frame):
@@ -160,11 +159,11 @@ def standardDeviation(back_list, back_mu):
         back_sig += np.subtract(back_list[i], back_mu) ** 2
 
     back_sig = np.divide(back_sig, len(back_list))
-    back_sig = back_sig **0.5
+    back_sig = back_sig ** 0.5
 
-    #print 'Frame Desvio Padrao: '
-    #print back_sig
-    #print
+    print 'Frame Desvio Padrao: '
+    print back_sig
+    print
     #cv2.imwrite('images/back_sig.bmp', back_sig)
     return back_sig
 
@@ -175,6 +174,8 @@ def imgMultplication(diff_frame, frame):
     rgblist = len(frame[0][0])
     diff_mask = np.zeros(shape=(height, width, rgblist), dtype=float)
 
+    diff_mask = np.multiply(diff_frame, frame)
+    """
     for i in xrange(0, height):
         for j in xrange(0, width):
             if (diff_frame[i][j] == 255):
@@ -183,9 +184,9 @@ def imgMultplication(diff_frame, frame):
             diff_mask[i][j][0] = diff_frame[i][j] * frame[i][j][0]
             diff_mask[i][j][1] = diff_frame[i][j] * frame[i][j][1]
             diff_mask[i][j][2] = diff_frame[i][j] * frame[i][j][2]
+    """
 
     return diff_mask
-
 
 def morfOperator(diff_frame):
     kernel2 = np.ones((5, 5), np.uint8)
@@ -195,11 +196,12 @@ def morfOperator(diff_frame):
                 [1, 1, 1],
                 [0, 1, 0]], np.uint8)
 
-    dilated_frame = cv2.dilate(diff_frame, kernel2, iterations = 1)
+    #dilated_frame = cv2.dilate(diff_frame, kernel2, iterations = 1)
+    #erosed_frame = cv2.erode(dilated_frame, kernel2, iterations = 1)
 
-    erosed_frame = cv2.erode(dilated_frame, kernel2, iterations = 1)
+    opening = cv2.morphologyEx(diff_frame, cv2.MORPH_OPEN, kernel)
 
-    return erosed_frame
+    return opening
 
 
 # =================================================#
@@ -215,7 +217,6 @@ def backgroundSubstraction(frame, back):
     ret, diff_frame = cv2.threshold(diff_frame, 125, 255, cv2.THRESH_BINARY)
     return diff_frame
 
-
 def substractionMOG2(frame, fgbg):
     fgmask = fgbg.apply(frame)
     ret, fgmask = cv2.threshold(fgmask, 152, 255, cv2.THRESH_BINARY)
@@ -225,28 +226,52 @@ def substractionMOG2(frame, fgbg):
 def gaussianSubstractor(frame, back_mu, back_sig):
     height = len(frame)
     width = len(frame[0])
-    #rgblist = len(frame[0][0])
+    rgblist = len(frame[0][0])
+
+    #tempFrame = np.zeros(shape=(height, width, rgblist), dtype=float)
     nopdf = 0
     diff_frame = np.zeros(shape=(height, width), dtype=float)
+
+    frame = pylab.normpdf(frame, back_mu, back_sig)
+
+    print frame
+
+
+    for i in xrange(0, height):
+        for j in xrange(0, width):
+            normdr = frame[i][j][0]
+
+            normdg = frame[i][j][1]
+
+            normdb = frame[i][j][2]
+
+            nopdf = pow((normdr*normdg*normdb), 0.3333333333333333)
+
+            px = limiarization(nopdf)
+
+            diff_frame[i][j] = px
+
+
     """
     for i in xrange(0, height):
         for j in xrange(0, width):
-            normdr = pylab.normpdf(frame[i][j][0], back_mu[i][j][0], back_sig[i][j][0])
-            normdg = pylab.normpdf(frame[i][j][1], back_mu[i][j][1], back_sig[i][j][1])
-            normdb = pylab.normpdf(frame[i][j][2], back_mu[i][j][2], back_sig[i][j][2])
-            nopdf = (normdr*normdg*normdb)**0.33333333333333333333333333333333333333333
-            px = limiarization(nopdf)
-            diff_frame[i][j] = px
-    """
-    diff_frame = pylab.normpdf(frame, back_mu, back_sig)
-    for i in xrange(0, 2):
-        diff_frame[:,:, 0] *= diff_frame[:, :, i] ** 0.33333333333333333333333
+            frame[i][j][0] = frame[i][j][0] * frame[i][j][1] * frame[i][j][2]
+            frame[i][j][0] = pow(frame[i][j][0], 0.3333333333333333)
 
-    #ret, diff_frame = cv2.threshold(diff_frame, 120, 255, cv2.THRESH_BINARY)
-    # print 'norm frame:'
-    # print diff_frame
-    # diff_frame = imgMultplication(diff_frame, frame)
-    cv2.imwrite('images/diff_frame.bmp', diff_frame)
+            frame[i][j][0] = limiarization(nopdf)
+            frame[i][j][0] = frame[i][j][0]
+    """
+    #for i in range(0, len(frame[0][0])):
+    #diff_frame = frame[:][:][0]
+    #diff_frame *= frame[:][:][1]
+    #diff_frame *= frame[:][:][2]
+    #diff_frame = diff_frame**0.3333333333333333333333333333
+
+    print 'Diff Frame: '
+    print diff_frame
+    print
+
+    #cv2.imwrite('images/diff_frame.bmp', diff_frame)
     return diff_frame
 
 
@@ -254,18 +279,14 @@ def limiarization(value):
     if (value > 1):
         value = 1
 
-    px = (1- value) * 255
+    px = (1 - value) * 255
 
-    if (px >= 120):
+    if (px >= 255):
         px = 255
     else:
         px = 0
 
     return px
-
-
-# def normalDistribuition(frame):
-
 
 # ================================================#
 
@@ -297,18 +318,11 @@ def shannonEntropy(list_prob):
 
 # =============================================== #
 
-# =================== OCR ======================= #
-# =============================================== #
-
-# =============================================== #
-
 # ===================== OCR ===================== #
 def OCR(diff_frame):
     with PyTessBaseAPI() as api:
         api.SetImageFile(diff_frame)
         print api.GetUTF8Text()
-
-
 
 # =============================================== #
 
