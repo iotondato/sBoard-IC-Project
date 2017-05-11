@@ -11,7 +11,8 @@ import pylab
 from matplotlib import pyplot as plt
 import pytesseract
 from tesserocr import PyTessBaseAPI
-
+# from picamera.array import PiRGBArray
+# from picamera import PiCamera
 
 # ============= Captura de imagens ===============#
 
@@ -24,6 +25,16 @@ def frameCamCapture(camera):
     print()
     frame = frameNormalization(frame)
     #cv2.imwrite('images/frame.bmp', frame)
+    return frame
+
+def frameRaspiCapture(camera):
+    rawCapture = PiRGBArray(camera)
+    # allow the camera to warmup
+    #time.sleep(0.1)
+    # grab an image from the camera
+    camera.capture(rawCapture, format="bgr")
+    frame = rawCapture.array
+
     return frame
 
 # ========= Amostras de Imagens de Fundo ==========#
