@@ -137,7 +137,7 @@ if __name__ == '__main__':
         cv2.imshow('diff_frame ', diff_frame)
         #cv2.imshow('diff_frame_b', diff_frame_b)
         # cv2.imshow('Sigma', back_sig)
-        cv2.imshow('Index', board_list[index])
+        #cv2.imshow('Index', board_list[index])
         # ========================================================================
 
         # i += 1
