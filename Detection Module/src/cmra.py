@@ -45,7 +45,7 @@ def backCamCapture(camera):
     px = 0
 
     # Captura 30 imagens para criar a imagem de fundo
-    for i in range(0, 70):
+    for i in range(0, 700):
         backF = frameCamCapture(camera)
         back_list.append(backF)
 
@@ -79,9 +79,9 @@ def frameNormalization(frame):
             #Nframe[i][j] = npx
             npx = 0
     """
-    print "Frame normalizado: "
-    print frame
-    print
+    #print "Frame normalizado: "
+    #print frame
+    #print
     return frame
 
 
