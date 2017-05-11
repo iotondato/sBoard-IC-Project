@@ -6,11 +6,12 @@
 
 import cv2
 import numpy as np
-from picamera.array import PiRGBArray
-from picamera import PiCamera
+# from picamera.array import PiRGBArray
+# from picamera import PiCamera
 import time
 import board as brd
 import cmra
+import pytesseract
 
 
 if __name__ == '__main__':
@@ -19,18 +20,17 @@ if __name__ == '__main__':
     probs_list = []
     nback_list = []
     i = 0
-
+    Betters = [50]
     # ================ RASP CAM ==================
+    """
     camera = PiCamera()
-    #camera.resolution = (180, 140)
+    camera.resolution = (720, 480)
     camera.framerate = 15
-    rawCapture = PiRGBArray(camera)
-
-    #camera.capture(rawCapture, format = "bgr")
+    """
     # ============================================
 
-    #img = cv2.VideoCapture(0)
-    #time.sleep(0.1)
+    img = cv2.VideoCapture(0)
+    time.sleep(0.1)
 
     """
     back_list = [[[123, 125, 154],
@@ -51,16 +51,27 @@ if __name__ == '__main__':
 
     """
 
-    back_list = cmra.backCamCapture(camera, rawCapture)
+    back_list = cmra.backCamCapture(img)
     back_mu = cmra.median(back_list)
     back_sig = cmra.standardDeviation(back_list, back_mu)
 
-    print 'fundo capturado'    
+
+    # ================ RASP CAM ==================
+    """
+    camera.capture('images/back.jpg')
+    time.sleep(30)
+    back = cv2.imread('images/back.jpg')
+    back = cv2.cvtColor(back, cv2.COLOR_BGR2GRAY)
+    """
+    # ============================================
 
     while True:
         # ====================== Captura Do Frame da Lousa =======================
         # ================ RASP CAM ==================
-        frame = cmra.frameCamCapture(camera, rawCapture)
+        """
+        camera.capture('images/frame.jpg')
+        frame = cv2.imread('images/frame.jpg')
+        """
         # ============================================
 
         """
@@ -72,37 +83,42 @@ if __name__ == '__main__':
         print len(frame[0])
         """
 
-        #frame = cmra.frameCamCapture(img)
+        frame = cmra.frameCamCapture(img)
         board = brd.lousa(frame)
         board_list.append(frame)
         # print board_list
         # ========================================================================
 
-        # =======================Subtracao De Fundo ==============================
-        # diff_frame  = cmra.backgroundSubstraction(frame, back)
-        # diff_frame = cmra.substractionMOG2(frame, back_mu)
-        diff_frame = cmra.gaussianSubstractor(frame, back_mu, back_sig)
-        # diff_frame = cmra.imgMultplication(diff_frame, frame)
+        # ======================= Subtracao De Fundo ==============================
 
+        diff_frame = cmra.gaussianSubstractor(frame, back_mu, back_sig)
+        #diff_frame = cmra.imgMultplication(diff_frame, frame)
+        #break
+        diff_frame_b = cmra.morfOperator(diff_frame)
         # diff_frame = cv2.imread('images/big_black.jpg')
-        # cmra.median()
-        # ========================================================================
-        # break
+        # =========================================================================
 
         # ============================= Entropia =================================
-        probs_list = cmra.probArray(cmra.histogram(diff_frame),cmra.imageSize(diff_frame))
+        probs_list = cmra.probArray(cmra.histogram(diff_frame), cmra.imageSize(diff_frame))
         shannon_list.append(cmra.shannonEntropy(probs_list))
-        index = np.argmax(shannon_list)
+        #index = np.argmax(shannon_list)
+
+        #print cmra.histogram(diff_frame)
+        #print probs_list
+        #break
 
         print "shannon_list last Entropy:"
         print "Index [" + str(len(shannon_list)-1) + "]: " + str(shannon_list[len(shannon_list)-1])
         print
-        print "Index [" + str(index) + "]: " + str(shannon_list[index])
-        print
+        #print "Index [" + str(index) + "]: " + str(shannon_list[index])
+        #print
+
+        #cv2.imwrite('images/imageSelected'+ '[' + str(index) + ']' + '.bmp', board_list[index])
         # ========================================================================
 
         # ===================== Identifcacao de conteudo =========================
-
+        #text = cv2.imread('images/testocr.png')
+        #cmra.OCR(diff_frame)
         # ========================================================================
 
         # ============================ Envio de Imagem ===========================
@@ -112,12 +128,17 @@ if __name__ == '__main__':
 
         # ========================== Show Images =================================
         # frame = cv2.resize(frame, (720, 480))
-        #cv2.imshow('frame', frame)
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        stringEntropy = 'Entropy: ' + str(shannon_list[len(shannon_list)-1])
+        cv2.putText(diff_frame, stringEntropy, (10, 110), font, 0.5, (255, 255, 255))
+
+        cv2.imshow('frame', frame)
         # diff_frame = cv2.resize(diff_frame, (720, 480))
-        #cv2.imshow('diff_frame ', diff_frame)
+        cv2.imshow('diff_frame ', diff_frame)
+        #cv2.imshow('diff_frame_b', diff_frame_b)
         # cv2.imshow('Sigma', back_sig)
         #cv2.imshow('Index', board_list[index])
-        # ========================================================================
+        ## ========================================================================
 
         # i += 1
 
@@ -138,7 +159,7 @@ if __name__ == '__main__':
             back = cv2.iread('images/back.jpg')
             back = cv2.cvtColor(back, cv2.COLOR_BGR2GRAY)
             """
-           # ============================================
+            # ============================================
 
     img.release()
     cv2.destroyAllWindows()
