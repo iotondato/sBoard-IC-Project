@@ -11,7 +11,7 @@ import pylab
 from matplotlib import pyplot as plt
 import pytesseract
 from tesserocr import PyTessBaseAPI
-
+from PIL import Image
 #from picamera.array import PiRGBArray
 #from picamera import PiCamera
 
@@ -55,29 +55,7 @@ def backCamCapture(camera, coef):
 # ============= Operacoes com Imagens =============#
 
 def frameNormalization(frame):
-    #rgblist = len(frame[0][0])
-    #height = len(frame)
-    #width = len(frame[0])
-    #Nframe = np.zeros(shape=(height, width, rgblist), dtype=float)
-
-    #Nframe  = frame / 255
     frame  = np.divide(frame + 0.0, 255)
-
-    """for i in xrange(0, height):
-        for j in xrange(0, width):
-            npxr = np.divide(frame[i][j][0] + 0.0, 255)
-            Nframe[i][j][0] = npxr
-            npxg = np.divide(frame[i][j][1] + 0.0, 255)
-            Nframe[i][j][1] = npxg
-            npxb = np.divide(frame[i][j][2] + 0.0, 255)
-            Nframe[i][j][2] = npxb
-            #npx = np.divide(frame[i][j] + 0.0, 255)
-            #Nframe[i][j] = npx
-            npx = 0
-    """
-    #print "Frame normalizado: "
-    #print frame
-    #print
     return frame
 
 
@@ -106,20 +84,6 @@ def median(back_list):
 
     back_mu = np.zeros(shape=(height, width, rgblist), dtype=float)
 
-    """for i in xrange(0, height):
-        for j in xrange(0, width):
-            for k in xrange(0, len(back_list)):
-                pxr += back_list[k][i][j][0]
-                pxg += back_list[k][i][j][1]
-                pxb += back_list[k][i][j][2]
-            pxr /= len(back_list)
-            pxg /= len(back_list)
-            pxb /= len(back_list)
-            back_mu[i][j][0] = pxr
-            back_mu[i][j][1] = pxg
-            back_mu[i][j][2] = pxb
-    """
-
     for i in xrange(0, len(back_list)):
         back_mu += back_list[i]
     back_mu = np.divide(back_mu, len(back_list))
@@ -143,25 +107,6 @@ def standardDeviation(back_list, back_mu):
     vrig = 0
     vrib = 0
 
-    """
-    for i in xrange(0, height):
-        for j in xrange(0, width):
-            for k in xrange(0, len(back_list)):
-                vrir += (back_list[k][i][j][0] - back_mu[i][j][0]) ** 2
-                vrig += (back_list[k][i][j][1] - back_mu[i][j][1]) ** 2
-                vrib += (back_list[k][i][j][2] - back_mu[i][j][2]) ** 2
-
-            vrir /= len(back_list)
-            vrir **= 0.5
-            vrig /= len(back_list)
-            vrig **= 0.5
-            vrib /= len(back_list)
-            vrib **= 0.5
-
-            back_sig[i][j][0] = vrir
-            back_sig[i][j][1] = vrig
-            back_sig[i][j][2] = vrib
-    """
     for i in xrange(0, len(back_list)):
         back_sig += np.subtract(back_list[i], back_mu) ** 2
     back_sig = np.divide(back_sig, len(back_list))
@@ -284,7 +229,7 @@ def gaussianSubstractor(frame, back_mu, back_sig):
     print frame
     print
 
-    #cv2.imwrite('images/diff_frame.bmp', diff_frame)
+    cv2.imwrite('images/diff_frame.png', diff_frame)
     return diff_frame
 
 
@@ -360,7 +305,16 @@ def OCR(diff_frame):
 
 
 def OCR2(diff_frame):
-    print pytesseract.image_to_string(diff_frame)
+    tessdata_dir_config = '--tessdata-dir "/usr/local/share/tessdata" '
+    #d = diff_frame*255
+    #d = cv2.imread('images/diff_frame.png')
+    d = Image.fromarray(np.uint8(diff_frame))
+    print pytesseract.image_to_string(d, config=tessdata_dir_config, lang='por')
+
+
+def OCR_GoogleAPI(diff_frame):
+    #Sera utilizado posteriormente
+    return
 # =============================================== #
 
 

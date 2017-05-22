@@ -91,17 +91,11 @@ if __name__ == '__main__':
         shannon_list.append(cmra.shannonEntropy(probs_list))
         better  = cmra.beastFrame(board_list, shannon_list)
 
-        cv2.imwrite('images/imageSelected.bmp', better)
-        # ========================================================================
+        #=========================================================================
 
         # ===================== Identifcacao de conteudo =========================
-        #text = cv2.imread('images/testocr.png')
-        #strDiff_frame = str(diff_frame)
-        #print 'String Diff Frame: '
-        #print strDiff_frame
-
-        #txt = cmra.OCR2(diff_frame)
-        #print txt
+        # nao foi possivel utilizar o pytesseract para extrair texto feito a mao
+        # entao usaremos uma API que realize esta tarefe de forma satisfatoria
         # ========================================================================
 
         # ============================ Envio de Imagem ===========================
