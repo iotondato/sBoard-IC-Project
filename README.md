@@ -1,1 +1,1 @@
-# sBoard-IC-Project
+# Smart Board-IC-Project
