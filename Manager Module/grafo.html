@@ -1,0 +1,29 @@
+{% extends "cabecalho.html" %}
+{% block body %}
+
+<center>
+<div class="teste">
+    <div class="craw_parans">
+        <form  action="{{ url_for('buildNetwork') }}" method="post" class="craw_form">
+            <label>URL:</label>
+            <input type="url" class="param" name="crawler_url">
+
+            <label>Depth:</label>
+            <input type="number" class="param" name="crawler_depth">
+
+             <label>Window Size:</label>
+            <input type="number" class="param" name="network_window">
+
+            <label>Treshold:</label>
+            <input type="number" class="param" name="network_treshold">
+
+            <label>Inflate Value:</label>
+            <input type="number" class="param" name="network_inflate">
+
+            <input type="image" src="{{url_for('static', filename='iOS_Icons/icons8-maintenance.png') }}" class="build_icon" height="50" width="50" type="submit" value="Go">
+        </form>
+    </div>
+</div>
+</center>
+
+{% endblock %}

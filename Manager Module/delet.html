@@ -1,0 +1,35 @@
+{% extends "cabecalho.html" %}
+{% block body %}
+
+<div class="board_box">
+        <div class="image_box" >
+            <center>
+                <!--<label>Board</label>-->
+                <img  id="board_image" src="{{image}}" height="420" width="700" class="editable_image" name="image">
+                <!--<input type="image" src="{{image}}" width="700" height="420" name="image" value="{{image}}" alt="submit">-->
+            </center>
+        </div>
+
+    <div class="edit_remove">
+        <form action="{{ url_for('add_text') }}" method=post class=add_text>
+            <div class="text_box">
+                <center>
+                    <!--<input type="text" id="key_words" autocomplete="off">-->
+                    <textarea id="key_words"  name="text"  >{{text}}</textarea>
+                </center>
+            </div>
+
+            <div class="edit">
+                <input type="image" src="{{url_for('static', filename='iOS_Icons/icons8-create_new.png') }}" alt="submit" value="{{image}}" name="image" width="35" height="35">
+            </div>
+        </form>
+
+        <form action="{{url_for('remove_board')}}" method="post", class="del">
+            <div class="remove">
+                <input type="image" src="{{url_for('static', filename='iOS_Icons/icons8-trash.png') }}" alt="{{image}}" name="r_board" value="{{image}}" width="35" height="35">
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

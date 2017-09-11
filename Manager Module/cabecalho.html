@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Brenno-IC</title>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300|Syncopate" rel="stylesheet">
+</head>
+
+<body>
+
+<header>
+    <div class="dropdown">
+        <!--<button class="dropbtn">Dropdown</button>-->
+        <button class="dropbtn"><img src="{{url_for('static', filename='iOS_Icons/icons8-menu.png') }}" height="30" width="30"></button>
+
+        <div class="dropdown-content">
+            <a action="/" method="/" href="/">Menu</a>
+            <a action="/" method="about" href="about">About</a>
+            <a action="/" method="grafo" href="grafo">Net Setup</a>
+            <a href="#">acknowledgements</a>
+        </div>
+    </div>
+
+    <form action="{{url_for('busca')}}" method="post" href="busca" id="search-form">
+        <input type="text" id="search" placeholder="Search Image ..." autocomplete="off" name="search_field" class="search_field">
+        <input type="image" src="{{url_for('static', filename='iOS_Icons/icons8-search.png') }}" alt="subimit" height="30" width="30" class="search"  type="submit" value="Go">
+    </form>
+
+    <div class="icon">
+        <a action="/" method="grafo" href="grafo">
+            <img src="{{url_for('static', filename='iOS_Icons/icons8-mind_map.png') }}" width="40" height="40">
+        </a>
+    </div>
+</header>
+
+{% block body %}
+
+{% endblock %}
+
+<div class="pad">
+
+</div>
+
+</body>
+</html>

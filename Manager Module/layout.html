@@ -1,0 +1,23 @@
+{% extends "cabecalho.html" %}
+{% block body %}
+
+<center>
+    <ul>
+        {% for i in range(0, 12) %}
+        <li class="imge">
+            <form action="{{ url_for('delet') }}" method=post class=select_image>
+            <div class="board">
+                <a action="/" method="post" href="delet" name="link">
+                    <figure>
+                        <!--<img src="{{imageList[0]}}" width="300" height="200" name="image">-->
+                        <input type="image" src="{{imageList[i]}}" alt="submit" value="{{imageList[i]}}" width="260" height="160" name="image">
+                    </figure>
+                </a>
+            </div>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</center>
+
+{% endblock %}
